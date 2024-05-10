@@ -52,4 +52,8 @@ Compare recovered signer to claimed signer: Verify whether the recovered signerâ
 ### File Explantion:
 1. `IdentityVerfication.sol`: Contains the smart contract.
 2. `user_Signature_Generation.html`: Interface for users to generate a signature using their private key.
-3. `third_Party_Signature_Generation.html`: Interface for third-party apps to generate a signature using their private key. 
+3. `third_Party_Signature_Generation.html`: Interface for third-party apps to generate a signature using their private key.
+
+## Contributors
+- Shreya Kashyap ([@Shreya241103](https://github.com/shreya241103))
+- Sai Manasa Nadimpalli ([@Mana120](https://github.com/Mana120))
