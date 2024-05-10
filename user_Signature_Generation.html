@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Signature</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        pre {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Generate Signature</h1>
+        <form id="identityForm">
+            <label for="userName">Username:</label>
+            <input type="text" id="userName" name="userName">
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email">
+            <label for="aadhar">Aadhar:</label>
+            <input type="text" id="aadhar" name="aadhar">
+            <button type="button" onclick="signMessage()">Sign Identity</button>
+        </form>
+
+        <pre>
+            // SPDX-License-Identifier: MIT
+            pragma solidity ^0.8.0;
+
+            contract Verify {
+
+                function VerifyMessage(bytes32 _hashedMessage, uint8 _v, bytes32 _r, bytes32 _s) public pure returns (address) {
+                    bytes memory prefix = "\x19Ethereum Signed Message:\n32";
+                    bytes32 prefixedHashMessage = keccak256(abi.encodePacked(prefix, _hashedMessage));
+                    address signer = ecrecover(prefixedHashMessage, _v, _r, _s);
+                    return signer;
+                }
+
+            }
+        </pre>
+
+        
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0-rc.0/web3.min.js" integrity="sha512-/PTXSvaFzmO4So7Ghyq+DEZOz0sNLU4v1DP4gMOfY3kFu9L/IKoqSHZ6lNl3ZoZ7wT20io3vu/U4IchGcGIhfw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        async function signMessage() {
+            if (!window.ethereum) return alert("Please Install Metamask");
+
+            // Connect and get Metamask account
+            const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+
+            // Get input values
+            const userName = document.getElementById("userName").value;
+            const phone = document.getElementById("phone").value;
+            const email = document.getElementById("email").value;
+            const aadhar = document.getElementById("aadhar").value;
+
+            // Concatenate input values to form message
+            const message = userName + phone + email + aadhar;
+            console.log({ message });
+
+            // Hash message
+            const hashedMessage = Web3.utils.sha3(message);
+            console.log({ hashedMessage });
+
+            // Sign hashed message
+            const signature = await ethereum.request({
+                method: "personal_sign",
+                params: [hashedMessage, accounts[0]],
+            });
+            console.log({ signature });
+
+            // Split signature
+            const r = signature.slice(0, 66);
+            const s = "0x" + signature.slice(66, 130);
+            const v = parseInt(signature.slice(130, 132), 16);
+            console.log({ r, s, v });
+
+            alert("Identity signed successfully!");
+        }
+    </script>
+</body>
+</html>
